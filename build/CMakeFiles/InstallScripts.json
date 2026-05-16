@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/ark/Downloads/arch-gpu-driver-installer/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
