@@ -4,7 +4,7 @@
 // ─── Package tables ───────────────────────────────────────────────────────────
 
 static const QStringList NV_CURRENT_PACMAN = {
-    "nvidia", "nvidia-utils", "nvidia-settings",
+    "nvidia-open", "nvidia-utils", "nvidia-settings",
     "lib32-nvidia-utils", "opencl-nvidia"
 };
 
@@ -23,8 +23,6 @@ static const QStringList NV_390_AUR    = {
 static const QStringList AMD_PACMAN = {
     "mesa", "lib32-mesa",
     "vulkan-radeon", "lib32-vulkan-radeon",
-    "libva-mesa-driver", "lib32-libva-mesa-driver",
-    "mesa-vdpau", "lib32-mesa-vdpau",
     "xf86-video-amdgpu"
 };
 
