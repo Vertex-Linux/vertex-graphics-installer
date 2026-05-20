@@ -1,9 +1,0 @@
-/home/ark/Downloads/arch-gpu-driver-installer/build/CMakeFiles/arch-gpu-driver-installer.dir
-/home/ark/Downloads/arch-gpu-driver-installer/build/CMakeFiles/edit_cache.dir
-/home/ark/Downloads/arch-gpu-driver-installer/build/CMakeFiles/rebuild_cache.dir
-/home/ark/Downloads/arch-gpu-driver-installer/build/CMakeFiles/list_install_components.dir
-/home/ark/Downloads/arch-gpu-driver-installer/build/CMakeFiles/install.dir
-/home/ark/Downloads/arch-gpu-driver-installer/build/CMakeFiles/install/local.dir
-/home/ark/Downloads/arch-gpu-driver-installer/build/CMakeFiles/install/strip.dir
-/home/ark/Downloads/arch-gpu-driver-installer/build/CMakeFiles/arch-gpu-driver-installer_autogen_timestamp_deps.dir
-/home/ark/Downloads/arch-gpu-driver-installer/build/CMakeFiles/arch-gpu-driver-installer_autogen.dir
