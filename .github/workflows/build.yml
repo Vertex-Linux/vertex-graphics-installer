@@ -1,10 +1,11 @@
-name: Build
+name: Build & Release
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -35,3 +36,43 @@ jobs:
           name: vertex-drivers
           path: build/vertex-drivers
           if-no-files-found: error
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download binary
+        uses: actions/download-artifact@v4
+        with:
+          name: vertex-drivers
+
+      - name: Make executable
+        run: chmod +x vertex-drivers
+
+      - name: Determine next tag
+        id: tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          latest=$(gh release list --repo "$GH_REPO" --limit 100 \
+            --json tagName --jq '.[].tagName' \
+            | grep -E '^R[0-9]+$' | sort -t R -k2 -n | tail -1)
+          if [ -z "$latest" ]; then
+            next="R1"
+          else
+            next="R$(( ${latest#R} + 1 ))"
+          fi
+          echo "tag=$next" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release create "${{ steps.tag.outputs.tag }}" \
+            --repo "$GH_REPO" \
+            --title "${{ steps.tag.outputs.tag }}" \
+            --notes "Built from \`${{ github.sha }}\`" \
+            vertex-drivers
