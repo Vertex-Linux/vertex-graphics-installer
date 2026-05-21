@@ -57,13 +57,10 @@ void PackageResolver::resolve(QList<GpuInfo> &gpus) const
 
 QString PackageResolver::aurHelper()
 {
-    for (const QString &h : {"yay", "paru", "pikaur"}) {
-        QProcess p;
-        p.start("which", QStringList() << h);
-        p.waitForFinished(3000);
-        if (p.exitCode() == 0) return h;
-    }
-    return {};
+    QProcess p;
+    p.start("which", QStringList() << "vpkg");
+    p.waitForFinished(3000);
+    return p.exitCode() == 0 ? QStringLiteral("vpkg") : QString();
 }
 
 bool PackageResolver::isInstalled(const QString &pkg)

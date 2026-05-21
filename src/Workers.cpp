@@ -34,19 +34,30 @@ InstallWorker::InstallWorker(
 
 void InstallWorker::run()
 {
-    // ── Step 1: pacman ────────────────────────────────────────────────────────
+    // Resolve the full path to vpkg — pkexec sanitises PATH so we can't rely on it.
+    QProcess whichProc;
+    whichProc.start("which", {"vpkg"});
+    whichProc.waitForFinished(3000);
+    const QString vpkgPath = QString::fromLocal8Bit(whichProc.readAllStandardOutput()).trimmed();
+    if (vpkgPath.isEmpty()) {
+        emit finished(false, "vpkg is not installed or not in PATH.");
+        return;
+    }
+
+    // ── Step 1: pacman (via vpkg pm install, elevated with pkexec) ────────────
     QStringList missing = PackageResolver::missing(m_pacmanPkgs);
 
     if (!missing.isEmpty()) {
-        emit logLine("==> Installing from official repositories...");
+        emit logLine("==> Installing from official repositories via vpkg...");
         emit logLine("    Packages: " + missing.join("  "));
         emit logLine("");
 
+        // pkexec <vpkg-full-path> pm install --noconfirm <pkgs>
         QStringList args;
-        args << "pacman" << "--noconfirm" << "--needed" << "-S" << missing;
+        args << vpkgPath << "pm" << "install" << "--noconfirm" << missing;
 
         if (!runCommand("pkexec", args)) {
-            emit finished(false, "pacman installation failed. See log for details.");
+            emit finished(false, "vpkg pm install failed. See log for details.");
             return;
         }
         emit logLine("\n==> Repo packages installed.\n");
@@ -54,27 +65,19 @@ void InstallWorker::run()
         emit logLine("==> All repo packages already installed.\n");
     }
 
-    // ── Step 2: AUR ───────────────────────────────────────────────────────────
+    // ── Step 2: AUR (via vpkg aur install — must NOT run as root) ────────────
     QStringList missingAur = PackageResolver::missing(m_aurPkgs);
 
     if (!missingAur.isEmpty()) {
-        if (m_aurHelper.isEmpty()) {
-            emit logLine("⚠  AUR packages required but no AUR helper found.");
-            emit logLine("   Install yay or paru, then re-run this tool.");
-            emit finished(false, "No AUR helper (yay/paru/pikaur) found.");
-            return;
-        }
-
-        emit logLine("==> Installing from AUR via " + m_aurHelper + "...");
+        emit logLine("==> Installing from AUR via vpkg...");
         emit logLine("    Packages: " + missingAur.join("  "));
         emit logLine("");
 
-        // AUR helpers must NOT run as root — they escalate internally.
         QStringList args;
-        args << "--noconfirm" << "--needed" << "-S" << missingAur;
+        args << "aur" << "install" << "--noconfirm" << missingAur;
 
-        if (!runCommand(m_aurHelper, args)) {
-            emit finished(false, "AUR installation failed. See log for details.");
+        if (!runCommand(vpkgPath, args)) {
+            emit finished(false, "vpkg aur install failed. See log for details.");
             return;
         }
         emit logLine("\n==> AUR packages installed.\n");

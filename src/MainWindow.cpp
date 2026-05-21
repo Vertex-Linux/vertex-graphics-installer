@@ -342,9 +342,9 @@ void MainWindow::onDetectFinished(const QList<GpuInfo> &gpus, const QString &aur
     m_installBtn->setEnabled(!allUnknown);
 
     if (aurHelper.isEmpty())
-        m_aurLabel->setText("⚠  No AUR helper found – legacy NVIDIA drivers won't be installable.");
+        m_aurLabel->setText("⚠  vpkg not found – AUR drivers won't be installable.");
     else
-        m_aurLabel->setText("AUR helper: " + aurHelper);
+        m_aurLabel->setText("Package manager: vpkg");
 }
 
 void MainWindow::onInstallLog(const QString &line)
@@ -380,10 +380,10 @@ void MainWindow::onInstallClicked()
     }
 
     if (!allAur.isEmpty() && m_aurHelper.isEmpty()) {
-        QMessageBox::warning(this, "No AUR Helper",
-            "An AUR package is required for your GPU driver but no AUR helper\n"
-            "(yay, paru, pikaur) was found on this system.\n\n"
-            "Install one and restart the application.");
+        QMessageBox::warning(this, "vpkg Not Found",
+            "An AUR package is required for your GPU driver but vpkg\n"
+            "was not found on this system.\n\n"
+            "Install vpkg and restart the application.");
         return;
     }
 
