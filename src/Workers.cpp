@@ -52,9 +52,9 @@ void InstallWorker::run()
         emit logLine("    Packages: " + missing.join("  "));
         emit logLine("");
 
-        // pkexec <vpkg-full-path> pm install --noconfirm <pkgs>
+        // pkexec <vpkg-full-path> pm install   <pkgs>
         QStringList args;
-        args << vpkgPath << "pm" << "install" << "--noconfirm" << missing;
+        args << vpkgPath << "pm" << "install" << " " << missing;
 
         if (!runCommand("pkexec", args)) {
             emit finished(false, "vpkg pm install failed. See log for details.");
@@ -74,7 +74,7 @@ void InstallWorker::run()
         emit logLine("");
 
         QStringList args;
-        args << "aur" << "install" << "--noconfirm" << missingAur;
+        args << "aur" << "install" << " " << missingAur;
 
         if (!runCommand(vpkgPath, args)) {
             emit finished(false, "vpkg aur install failed. See log for details.");
